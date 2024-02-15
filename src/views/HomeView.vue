@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>抽獎 Bingo</h1>
+    <h1>Bingo</h1>
     <label for="range">請輸入數字範圍：1 到</label>
     <InputNumber id="range" v-model="maxNumber" inputId="integeronly" />
     <br />
@@ -56,6 +56,7 @@ const drawNextNumber = async () => {
 
     const allNumbers = Array.from(
       { length: maxNumber.value },
+      // 使用底線 _ 來表示不使用的參數
       (_, index) => index + 1
     );
     const shuffledNumbers = allNumbers.sort(() => Math.random() - 0.5);
@@ -73,6 +74,9 @@ const drawNextNumber = async () => {
         // await new Promise(resolve => setTimeout(resolve, 1000));
 
         showNumber.value = false;
+
+        // Shuffle the remaining numbers
+        shuffledNumbers.sort(() => Math.random() - 0.5);
         break; // Exit the loop if a non-drawn number is found
       }
     }
