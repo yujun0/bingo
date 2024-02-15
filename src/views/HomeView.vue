@@ -2,11 +2,33 @@
   <div>
     <h1>抽獎 Bingo</h1>
     <label for="range">請輸入數字範圍：1 到</label>
-    <input type="number" id="range" v-model="maxNumber" />
-    <button @click="startDraw" :disabled="isDrawing">開始抽獎</button>
+    <InputNumber id="range" v-model="maxNumber" inputId="integeronly" />
+    <br />
+    <br />
+    <Button
+      class="p-button-sm"
+      label="開始抽獎"
+      @click="drawNextNumber"
+      :disabled="isDrawing || !moreNumbersLeft"
+    />
+    <Button
+      label="重置"
+      icon="pi pi-replay"
+      @click="reset"
+      class="p-button-sm"
+      :disabled="isDrawing"
+      severity="danger"
+    />
 
-    <div class="drawn-number" v-if="drawnNumber !== null">
-      <p class="animated fadeIn">{{ drawnNumber }}</p>
+    <div v-if="drawnNumber !== null">
+      <p
+        class="animated"
+        :class="{ fadeIn: showNumber }"
+        style="font-weight: bold"
+      >
+        {{ drawnNumber }}
+      </p>
+      <p v-if="!moreNumbersLeft" class="last-number">這是最後一個數字！</p>
     </div>
 
     <div class="drawn-numbers" v-if="drawnNumbers.length > 0">
@@ -19,32 +41,59 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive } from "vue";
 
 const maxNumber = ref(10);
 const isDrawing = ref(false);
 const drawnNumber = ref(null);
 const drawnNumbers = reactive([]);
+const showNumber = ref(false);
+const moreNumbersLeft = ref(true);
 
-const startDraw = () => {
-  if (!isDrawing.value) {
+const drawNextNumber = async () => {
+  if (!isDrawing.value && moreNumbersLeft.value) {
     isDrawing.value = true;
 
-    // Generate non-repeating random number for Bingo
-    const allNumbers = Array.from({ length: maxNumber.value }, (_, index) => index + 1);
+    const allNumbers = Array.from(
+      { length: maxNumber.value },
+      (_, index) => index + 1
+    );
     const shuffledNumbers = allNumbers.sort(() => Math.random() - 0.5);
-    const drawInterval = setInterval(() => {
-      if (shuffledNumbers.length > 0) {
-        drawnNumber.value = shuffledNumbers.pop();
-        drawnNumbers.push(drawnNumber.value);
-      } else {
-        clearInterval(drawInterval);
-        isDrawing.value = false;
+
+    while (shuffledNumbers.length > 0) {
+      const nextNumber = shuffledNumbers.pop();
+
+      // Check if the number has been drawn before
+      if (!drawnNumbers.includes(nextNumber)) {
+        drawnNumber.value = nextNumber;
+        drawnNumbers.push(nextNumber);
+        showNumber.value = true;
+
+        // Delay for the animation
+        // await new Promise(resolve => setTimeout(resolve, 1000));
+
+        showNumber.value = false;
+        break; // Exit the loop if a non-drawn number is found
       }
-    }, 1000); // Adjust the interval as needed
+    }
+
+    // Check if more numbers are left to draw
+    if (shuffledNumbers.length === 0) {
+      moreNumbersLeft.value = false;
+    }
+
+    isDrawing.value = false;
   }
 };
 
+const reset = () => {
+  maxNumber.value = 10;
+  isDrawing.value = false;
+  drawnNumber.value = null;
+  drawnNumbers.length = 0;
+  showNumber.value = false;
+  moreNumbersLeft.value = true;
+};
 </script>
 
 <style scoped>
@@ -54,11 +103,6 @@ const startDraw = () => {
 
 .fadeIn {
   opacity: 1;
-}
-
-.drawn-number {
-  font-size: 2em;
-  margin: 20px 0;
 }
 
 .drawn-numbers {
@@ -74,5 +118,10 @@ const startDraw = () => {
   display: inline-block;
   font-size: 1.2em;
   margin: 0 5px;
+}
+
+.last-number {
+  font-weight: bold;
+  color: red;
 }
 </style>
