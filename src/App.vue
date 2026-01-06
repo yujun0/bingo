@@ -1,26 +1,37 @@
 <template>
-  <router-view/>
+  <div class="app-container">
+    <router-view />
+  </div>
 </template>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-nav {
-  padding: 30px;
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+#app {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.app-container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
 }
 </style>
