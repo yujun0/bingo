@@ -60,7 +60,7 @@
 <script setup>
 import { ref, reactive, computed } from "vue";
 
-const maxNumber = ref(75); // Standard Bingo max
+const maxNumber = ref(50); // Standard Bingo max
 const isDrawing = ref(false);
 const drawnNumber = ref(null);
 const drawnNumbers = reactive([]);
